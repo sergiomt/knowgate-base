@@ -45,7 +45,10 @@ public final class Chronometer {
   }
 
   /**
-   * Get milliseconds elapsed between start and stop calls
+   * Get milliseconds elapsed between start and stop calls.
+   * If stop() has not been called then return milliseconds between start and now.
+   * If stop() has not been called then return milliseconds between when the Chronometer instance was created and now or stop time.
+   * @return long milliseconds elapsed since chronometer was started
    */
   public long elapsed() {
 	return ((tmStop==-1l ? System.nanoTime() : tmStop) - tmStart) / 1000l;

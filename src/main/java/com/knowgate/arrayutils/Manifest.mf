@@ -1,0 +1,8 @@
+Manifest-version: 1.0
+Name: com/knowgate/arrayutils
+Specification-Title: Array manipulation functions from Apache Commons
+Specification-Version: 9.0
+Specification-Vendor: ASF
+Implementation-Title: com.knowgate.arrayutils
+Implementation-Version: 9.0
+Implementation-Vendor: ASF

@@ -219,7 +219,7 @@ public final class TypeResolver {
 	 * Resolves the raw class for the {@code genericType}, using the type variable information from the {@code subType}
 	 * else {@link Unknown} if the raw class cannot be resolved.
 	 * 
-	 * @param type to resolve raw class for
+	 * @param genericType to resolve raw class for
 	 * @param subType to extract type variable information from
 	 * @return raw class for the {@code genericType} else {@link Unknown} if it cannot be resolved
 	 */
@@ -352,6 +352,8 @@ public final class TypeResolver {
 
 	/**
 	 * Resolves the first bound for the {@code typeVariable}, returning {@code Unknown.class} if none can be resolved.
+	 * @param typeVariable
+	 * @return Type
 	 */
 	public static Type resolveBound(TypeVariable<?> typeVariable) {
 		Type[] bounds = typeVariable.getBounds();
@@ -367,8 +369,8 @@ public final class TypeResolver {
 
 	/**
 	 * 
-	 * @param Object
-	 * @return <b>true</b> is parameter is instance of Boolean, Short, Integer, BigInteger, Long, Float, Double, BigDecimal, String, Date, Calendar, Timestamp  
+	 * @param obj Object
+	 * @return <b>true</b> if parameter is instance of Boolean, Short, Integer, BigInteger, Long, Float, Double, BigDecimal, String, Date, Calendar, Timestamp  
 	 */
 	public static boolean isOfStandardType(Object obj) {
 		return obj instanceof String || obj instanceof Date || obj instanceof Timestamp ||

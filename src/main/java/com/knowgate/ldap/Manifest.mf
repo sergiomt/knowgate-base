@@ -1,0 +1,8 @@
+Manifest-version: 1.0
+Name: com/knowgate/ldap
+Specification-Title: LDAP Interface and base Exception
+Specification-Version: 9.0
+Specification-Vendor: Know Gate
+Implementation-Title: com.knowgate.ldap
+Implementation-Version: 9.0
+Implementation-Vendor: Know Gate

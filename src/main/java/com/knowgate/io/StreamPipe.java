@@ -22,7 +22,7 @@ import com.knowgate.debug.DebugFile;
 
 /** This class links input and output streams so that data taken from input
 *  stream is transfered to the output stream. This class can be used to
-*  connect standard input/ouput stream of Java application with
+*  connect standard input/output stream of Java application with
 *  output/input streams of spawned child process, so that all user's input is
 *  redirected to the child and all it's output is visible for the user.<P>
 *
@@ -77,8 +77,9 @@ public class StreamPipe {
   /** Establish connection between input and output streams with specified size of buffer used for data transfer.
    * @param in  input stream
    * @param out output stream
-   * @param bufferSize size of buffer used to transfer data from the input stream to the output stream
+   * @param bufferSize int size of buffer used to transfer data from the input stream to the output stream
    * @param  autoFlush if set to <b>true</b> OutputStream.flush() method will be called each time bufferSize bytes are written into output stream
+   * @throws IOException
    */
   public void between(InputStream in,OutputStream out, int bufferSize, boolean autoFlush)
     throws IOException
@@ -92,6 +93,8 @@ public class StreamPipe {
   /** Establish connection between input and output streams with specified size of buffer used for data transfer and no auto-flush.
    * @param in  input stream
    * @param out output stream
+   * @param bufferSize int size of buffer used to transfer data from the input stream to the output stream
+   * @throws IOException
    */
   public void between(InputStream in, OutputStream out, int bufferSize)
     throws IOException
@@ -105,6 +108,7 @@ public class StreamPipe {
   /** Establish connection between input and output streams with default buffer size and no auto-flush.
    * @param in  input stream
    * @param out output stream
+   * @throws IOException
    */
   public void between(InputStream in, OutputStream out)
     throws IOException {
@@ -122,6 +126,8 @@ public class StreamPipe {
    * autoFlush is set to <b>false</b> and buffer size is set to 8000 bytes.
    * @param sFilePath input stream
    * @param oOutStrm output stream
+   * @throws IOException
+   * @throws FileNotFoundException
    * @since 3.0
    */
   public static void between(String sFilePath, OutputStream oOutStrm)

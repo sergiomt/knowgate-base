@@ -1,10 +1,25 @@
 package com.knowgate.io.chardet;
 
+/**
+ * This file is licensed under the Apache License version 2.0.
+ * You may not use this file except in compliance with the license.
+ * You may obtain a copy of the License at:
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.
+ */
+
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.FileInputStream;
 
+/**
+ * Detect the character encoding of a text file
+ * @author Sergio Montoro Ten
+ */
 public class CharacterSetDetector implements nsICharsetDetectionObserver {
 
   private boolean bDetectedCharset;
@@ -19,11 +34,21 @@ public class CharacterSetDetector implements nsICharsetDetectionObserver {
 	oDetector = new nsDetector(nsPSMDetector.ALL);
   }
 
-  public void Notify(String sCharSet) {
-  	sDetectedCharset = sCharSet;
+  /**
+   * Set the encoding to a given value
+   * @param charSet Character encoding
+   */
+  public void Notify(String charSet) {
+  	sDetectedCharset = charSet;
     bDetectedCharset = true ;
   }
 
+  /**
+   * Detect character encoding of the text data coming from an InputStream
+   * @param oInStrm InputStream 
+   * @param sDefaultCharset String
+   * @throws IOException
+   */
   public String detect(InputStream oInStrm, String sDefaultCharset)
   	throws IOException {
 
@@ -60,6 +85,12 @@ public class CharacterSetDetector implements nsICharsetDetectionObserver {
 	return sDetectedCharset;
   } // detect
 
+  /**
+   * Detect character encoding of the text data in a File
+   * @param oFile File
+   * @param sDefaultCharset String
+   * @throws IOException
+   */
   public String detect(File oFile, String sDefaultCharset)
   	throws IOException {
 
@@ -72,6 +103,12 @@ public class CharacterSetDetector implements nsICharsetDetectionObserver {
     return sRetVal;
   }
   	
+  /**
+   * Detect character encoding of the text data in a File
+   * @param sFile String Full path to file
+   * @param sDefaultCharset String
+   * @throws IOException
+   */
   public String detect(String sFile, String sDefaultCharset)
   	throws IOException {
 

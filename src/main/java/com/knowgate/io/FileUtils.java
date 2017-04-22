@@ -285,8 +285,8 @@ public class FileUtils {
      * If this parameter is <code>null</code>, subdirectories will not be included in the
      * search. Use TrueFileFilter.INSTANCE to match all directories.
      * @return an collection of java.io.File with the matching files
-     * @see org.apache.commons.io.filefilter.FileFilterUtils
-     * @see org.apache.commons.io.filefilter.NameFileFilter
+     * @see com.knowgate.io.filefilter.FileFilterUtils
+     * @see com.knowgate.io.filefilter.NameFileFilter
      */
     public static Collection listFiles(
             File directory, IOFileFilter fileFilter, IOFileFilter dirFilter) {
@@ -331,8 +331,8 @@ public class FileUtils {
      * If this parameter is <code>null</code>, subdirectories will not be included in the
      * search. Use TrueFileFilter.INSTANCE to match all directories.
      * @return an iterator of java.io.File for the matching files
-     * @see org.apache.commons.io.filefilter.FileFilterUtils
-     * @see org.apache.commons.io.filefilter.NameFileFilter
+     * @see com.knowgate.io.filefilter.FileFilterUtils
+     * @see com.knowgate.io.filefilter.NameFileFilter
      * @since Commons IO 1.2
      */
     public static Iterator iterateFiles(

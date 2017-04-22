@@ -1,0 +1,12 @@
+com.knowgate.arrayutils
+com.knowgate.currency
+com.knowgate.dateutils
+com.knowgate.debug
+com.knowgate.encryption
+com.knowgate.gis
+com.knowgate.io
+com.knowgate.io.chardet
+com.knowgate.ldap
+com.knowgate.stringutils
+com.knowgate.tuples
+com.knowgate.typeutils

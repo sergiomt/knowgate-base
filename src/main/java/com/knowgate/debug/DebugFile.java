@@ -23,7 +23,7 @@ import java.io.InputStream;
 /**
  * <p>Write execution traces to a flat text file</p>
  * Traces are written to javatrc.txt file on the specified directory.<br>
- * By default /tmp/ on Unix and C:\WINNT\TEMP or C:\WINDOWS\TEMP on Windows.
+ * By default /vagrant/tmp/ on Unix and C:\TEMP\\Debug on Windows.
  * @author Sergio Montoro Ten
  * @version 7.0
  */
@@ -67,23 +67,22 @@ public final class DebugFile {
 
   /**
    * Get debug file path
-   * @return If setFile() has not been called this method returns C:\\javatrc.txt
-   * on Windows environments or /tmp/javatrc.txt on UNIX environments
-   * @since v2.2 the behaviour of this method has changed and now reads Java
-   * environment variable hipergate.debugdir for getting the directory where
-   * javatrc.txt file is generated
+   * Read Java environment variable knowgate.debugdir to get the directory where javatrc.txt files are generated.
+   * If knowgate.debugdir is not set then read debugdir.cnf resource file in this package.
+   * If knowgate.debugdir is not set and debugdir.cnf is not found or empty the return /vagrant/tmp on Unix systems and C:\Temp\Debug on Windows
+   * @return String Full path to the file where the current thread will write its traces
    */
   public static String getFile() {
     if (null==sFilePath)
-      sFilePath = chomp(System.getProperty("hipergate.debugdir", getDebugPath()),File.separator) + "javatrc.";
+      sFilePath = chomp(System.getProperty("knowgate.debugdir", getDebugPath()),File.separator) + "javatrc.";
     return sFilePath+String.valueOf(Thread.currentThread().getId())+".txt";
   } // getFile()
 
   /**
-   * Increment identation level
-   * Maximum identation level is 80,
+   * Increment indentation level
+   * Maximum indentation level is 80,
    * after reaching that limit
-   * identation is automatically set to zero
+   * Indentation is automatically set to zero
    */
   public static void incIdent() {
     Long oThId = new Long (Thread.currentThread().getId());
@@ -98,7 +97,7 @@ public final class DebugFile {
   } // incIdent()
 
   /**
-   * Decrement identation level
+   * Decrement indentation level
    */
 
   public static void decIdent() {
@@ -126,7 +125,8 @@ public final class DebugFile {
 
   /**
    * <p>Write trace</p>
-   * Traces are written to /tmp/javatrc.txt on UNIX systems or C:\WINNT\javatrc.txt on Windows
+   * If setFile() has not been called, traces are written to /vagrant/tmp/ on UNIX systems or C:\Temp\Debug on Windows
+   * @param str Characters to be written
    */
   public static void write(char[] str) {
     FileWriter oDebugWriter;
@@ -158,6 +158,7 @@ public final class DebugFile {
   /**
    * <p>Write trace</p>
    * Traces are written to /tmp/javatrc.txt on UNIX systems or C:\WINNT\javatrc.txt on Windows
+   * @param str String to be written
    */
   public static void write(String str) {
     FileWriter oDebugWriter;

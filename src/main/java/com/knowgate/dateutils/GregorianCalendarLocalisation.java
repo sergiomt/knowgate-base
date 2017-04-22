@@ -306,6 +306,7 @@ public class GregorianCalendarLocalisation {
    * "d"  for dates with format "yyyy-MM-dd"
    * "s"  for dates with format "dd/MM/yyyy"
    * "ts" for dates with format "yyyy-MM-dd HH:mm:ss"
+   * @return boolean
    * @since 7.0
   */  
   public static boolean isDate (String dtexpr, String dtformat) {

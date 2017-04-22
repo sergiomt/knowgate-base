@@ -1,0 +1,8 @@
+Manifest-version: 1.0
+Name: com/knowgate/encryption
+Specification-Title: MD5 and RC4 implementations
+Specification-Version: 9.0
+Specification-Vendor: Santeri Paavolainen & Clarence Ho
+Implementation-Title: com.knowgate.encryption
+Implementation-Version: 9.0
+Implementation-Vendor: Santeri Paavolainen & Clarence Ho

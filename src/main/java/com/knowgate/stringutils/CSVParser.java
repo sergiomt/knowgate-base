@@ -262,6 +262,7 @@ public class CSVParser  {
 	/**
 	 * <p>Parse data from a character array</p>
 	 * Parsed values are stored at an internal array in this CSVParser.
+	 * @param aCharData Character array to be parsed
 	 * @param sFileDescriptor A list of column names separated by ',' ';' '|' '`' or '\t'.
 	 * Column names may be quoted. Lines are delimiter by '\n' characters<br>
 	 * Example 1) tx_mail,tx_name,tx_surname<br>
@@ -575,7 +576,7 @@ public class CSVParser  {
 	 * <p>Get line from a parsed file.</p>
 	 * Lines are delimited by the Line Feed (LF, CHAR(10), '\n') character
 	 * @param iLine Line Number [0..getLineCount()-1]
-	 * @return Full Text for Line. If iLine<0 or iLine>=getLineCount() then <b>null</b>
+	 * @return Full Text for Line. If iLine&lt;0 or iLine&gt;=getLineCount() then <b>null</b>
 	 * @throws IllegalStateException If parseFile() has not been called prior to getLine()
 	 * @throws UnsupportedEncodingException
 	 */
@@ -847,7 +848,7 @@ public class CSVParser  {
 
 	/**
 	 * Write CSVParser matrix to delimited text file
-	 * @param oStrm OutputStream
+	 * @param sFilePath String Path to output file
 	 * @throws IOException
 	 * @throws SecurityException
 	 * @since 3.0

@@ -1,0 +1,8 @@
+Manifest-version: 1.0
+Name: com/knowgate/io/filefilter
+Specification-Title: File Filters from Apache Commons
+Specification-Version: 9.0
+Specification-Vendor: ASF
+Implementation-Title: com.knowgate.io.filefilter
+Implementation-Version: 9.0
+Implementation-Vendor: ASF

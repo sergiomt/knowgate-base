@@ -21,8 +21,8 @@ public class Log {
 	public static Logger out = LogManager.getLogger(DebugFile.class);
 
 	/**
-	 * Get the stack trace of a throwable  
-	 * @param Throwable 
+	 * Get the stack trace of a Throwable  
+	 * @param aThrowable
 	 * @return String
 	 */
 	public static String stackTrace( Throwable aThrowable ) {

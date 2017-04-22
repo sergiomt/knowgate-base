@@ -303,7 +303,7 @@ public class MD5 {
    * Updates hash with the bytebuffer given (using at maximum length bytes from
    * that buffer)
    *
-   * @param state	Which state is updated
+   * @param stat	Which state is updated
    * @param buffer	Array of bytes to be hashed
    * @param offset	Offset to buffer array
    * @param length	Use at maximum `length' bytes (absolute
@@ -370,12 +370,20 @@ public class MD5 {
 
   /**
    * Plain update, updates this object
+   * @param buffer Array of bytes to use for updating the hash
+   * @param offset int
+   * @param length int
    */
 
   public void Update (byte buffer[], int offset, int length) {
       Update(this.state, buffer, offset, length);
   }
 
+  /**
+   * Plain update, updates this object with offset zero
+   * @param buffer Array of bytes to use for updating the hash
+   * @param length int
+   */
   public void Update (byte buffer[], int length) {
       Update(this.state, buffer, 0, length);
   }
