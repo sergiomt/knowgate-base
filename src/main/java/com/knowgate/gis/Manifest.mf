@@ -1,0 +1,8 @@
+Manifest-version: 1.0
+Name: com/knowgate/gis
+Specification-Title: KnowGate GIS Wrapper Interfaces
+Specification-Version: 8.0
+Specification-Vendor: Know Gate
+Implementation-Title: com.knowgate.gis
+Implementation-Version: 8.0
+Implementation-Vendor: Know Gate

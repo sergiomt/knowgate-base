@@ -1,0 +1,8 @@
+Manifest-version: 1.0
+Name: com/knowgate/stringutils
+Specification-Title: String manipulation helper classes
+Specification-Version: 8.0
+Specification-Vendor: Know Gate
+Implementation-Title: com.knowgate.stringutils
+Implementation-Version: 8.0
+Implementation-Vendor: Know Gate

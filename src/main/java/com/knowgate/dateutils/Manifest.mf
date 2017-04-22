@@ -1,0 +1,8 @@
+Manifest-version: 1.0
+Name: com/knowgate/dateutils
+Specification-Title: Month and week date localisation and utils
+Specification-Version: 9.0
+Specification-Vendor: Know Gate
+Implementation-Title: com.knowgate.dateutils
+Implementation-Version: 9.0
+Implementation-Vendor: Know Gate

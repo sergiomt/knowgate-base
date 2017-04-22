@@ -1,0 +1,8 @@
+Manifest-version: 1.0
+Name: com/knowgate/io
+Specification-Title: Character set determination, MD5 and other IO helper classes
+Specification-Version: 8.0
+Specification-Vendor: Know Gate
+Implementation-Title: com.knowgate.io
+Implementation-Version: 8.0
+Implementation-Vendor: Know Gate
