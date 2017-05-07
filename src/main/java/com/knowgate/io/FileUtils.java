@@ -42,6 +42,7 @@ import com.knowgate.io.filefilter.IOFileFilter;
 import com.knowgate.io.filefilter.SuffixFileFilter;
 import com.knowgate.io.filefilter.TrueFileFilter;
 import com.knowgate.io.output.NullOutputStream;
+import com.knowgate.system.Shell;
 
 /**
  * General file manipulation utilities.
@@ -1830,4 +1831,38 @@ public class FileUtils {
         }
     }
 
+    //-----------------------------------------------------------
+
+    /**
+     * <P>Get temporary directory</P>
+     * @return For UNIX Systems this function always return "/tmp/".<BR>
+     * For Windows Systems getTempDir() returns the value set at the environment
+     * variable "TEMP" or C:\\%WINDIR%\\TEMP\\ if TEMP variable is not set.
+     * @throws IllegalArgumentException
+     */
+    public static String getTempDir() throws IllegalArgumentException {
+      if (System.getProperty("os.name").startsWith("Windows")) {
+        Shell s = new Shell();
+    	String sTempDir = s.getEnvironmentVariable("TEMP");
+        if (null==sTempDir) {
+          File oWinDir;
+          oWinDir = new File("C:\\WINNT\\TEMP\\");
+          if (oWinDir.exists()) {
+            return "C:\\WINNT\\TEMP\\";
+          } else {
+            oWinDir = new File("C:\\WINDOWS\\TEMP\\");
+            if (oWinDir.exists()) {
+              return "C:\\WINDOWS\\TEMP\\";
+            } else {
+              return "C:\\TEMP\\";
+            }
+          }
+        } else {
+          return sTempDir;
+        }
+      } else { // Unix
+        return "/tmp/";
+      }
+    } // getTempDir()
+    
 }
