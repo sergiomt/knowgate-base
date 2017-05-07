@@ -395,12 +395,19 @@ public final class TypeResolver {
 		return oRetVal;
 	} // getClassForName
 
+	@SuppressWarnings("rawtypes")
 	public static final Class ClassLangString  = getClassForName("java.lang.String");
+	@SuppressWarnings("rawtypes")
 	public static final Class ClassUtilDate  = getClassForName("java.util.Date");
+	@SuppressWarnings("rawtypes")
 	public static final Class ClassSQLDate  = getClassForName("java.sql.Date");
+	@SuppressWarnings("rawtypes")
 	public static final Class ClassTimestamp = getClassForName("java.sql.Timestamp");
+	@SuppressWarnings("rawtypes")
 	public static final Class ClassCalendar = getClassForName("java.util.Calendar");
+	@SuppressWarnings("rawtypes")
 	public static final Class ClassBigInteger = getClassForName("java.math.BigInteger");
+	@SuppressWarnings("rawtypes")
 	public static final Class ClassBigDecimal = getClassForName("java.math.BigDecimal");
 
 }
