@@ -32,26 +32,24 @@ public class Uid {
 	   * @param byCategory byte Character category, must be one of Character.UNASSIGNED, Character.UPPERCASE_LETTER or Character.LOWERCASE_LETTER
 	   * If sCharset is <b>null</b> then it is "abcdefghjkmnpqrstuvwxyz23456789" by default
 	   * @return Identifier of given length composed using the designated character set
-	   * created using the machine IP address, current system date, a randon number
-	   * and a sequence.
 	   */
 	  public static String generateRandomId(int iLength, String sCharset, byte byCategory )
 	  	throws StringIndexOutOfBoundsException {
 	    
 	    if (iLength<=0) 
-	      throw new StringIndexOutOfBoundsException("Gadgets.generateRandomId() identifier length must be greater than zero");
+	      throw new StringIndexOutOfBoundsException("Uid.generateRandomId() identifier length must be greater than zero");
 
 	    if (iLength>4096) 
-	      throw new StringIndexOutOfBoundsException("Gadgets.generateRandomId() identifier length must be less than or equal to 4096");
+	      throw new StringIndexOutOfBoundsException("Uid.generateRandomId() identifier length must be less than or equal to 4096");
 
 	    if (sCharset!=null) {
-	      if (sCharset.length()==0) throw new StringIndexOutOfBoundsException("Gadgets.generateRandomId() character set length must be greater than zero");
+	      if (sCharset.length()==0) throw new StringIndexOutOfBoundsException("Uid.generateRandomId() character set length must be greater than zero");
 	    } else {
 	      sCharset = "abcdefghjkmnpqrstuvwxyz23456789";
 	    }
 	    
 		if (byCategory!=Character.UNASSIGNED && byCategory!=Character.UPPERCASE_LETTER && byCategory!=Character.LOWERCASE_LETTER)
-		  throw new IllegalArgumentException("Gadgets.generateRandomId() Character category must be one of {UNASSIGNED, UPPERCASE_LETTER, LOWERCASE_LETTER}");
+		  throw new IllegalArgumentException("Uid.generateRandomId() Character category must be one of {UNASSIGNED, UPPERCASE_LETTER, LOWERCASE_LETTER}");
 
 		int iCsLen = sCharset.length();
 	    StringBuilder oId = new StringBuilder(iLength);
