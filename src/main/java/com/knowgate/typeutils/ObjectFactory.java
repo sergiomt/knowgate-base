@@ -13,13 +13,21 @@ package com.knowgate.typeutils;
 
 import java.io.File;
 import java.io.IOException;
+
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Parameter;
+
 import java.net.URISyntaxException;
 import java.net.URL;
+
 import java.util.Enumeration;
 import java.util.HashSet;
+import java.util.WeakHashMap;
+import java.util.Collections;
+import java.util.Map;
 import java.util.Set;
+import java.util.List;
+import java.util.LinkedList;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
@@ -32,6 +40,8 @@ import com.knowgate.debug.DebugFile;
  */
 public class ObjectFactory {
 
+	private static final Map<String, Constructor<? extends Object>> constructorCache = Collections.synchronizedMap(new WeakHashMap<>());
+
 	/**
 	 * <p>Get the constructor for a class that matches the given parameter classes.</p>
 	 * @param objectClass Class&lt;? extends Object&gt;
@@ -39,18 +49,62 @@ public class ObjectFactory {
 	 * @return Constructor&lt;? extends Object&gt; or <b>null</b> if there is no constructor with given parameters at the class.
 	 */
 	public static Constructor<? extends Object> getConstructor(Class<? extends Object> objectClass, Class<?>[] parameterClasses) {
+		
 		Constructor<? extends Object> objectContructor = null;
-		objectContructor = tryConstructor(objectClass, parameterClasses);
-		if (null==objectContructor && parameterClasses.length==2) {
-			objectContructor = tryConstructor(objectClass, parameterClasses[0]);
-			if (null==objectContructor)
-				objectContructor = tryConstructor(objectClass, parameterClasses[1]);
-			if (null==objectContructor)
-				objectContructor = tryConstructor(objectClass);
-		}
+		
+		final String constructorSignature = signature(objectClass, parameterClasses);
+		objectContructor = constructorCache.get(constructorSignature);
+
 		if (null==objectContructor) {
-			if (DebugFile.trace)
-				DebugFile.writeln("No suitable constructor found for "+objectClass.getName());
+			objectContructor = tryConstructorExtended (objectClass, parameterClasses);
+		
+			// Try to permute first, second and third arguments
+			if (null==objectContructor) {
+				if (parameterClasses.length==2) {
+					// Try parameters in reverse order
+					objectContructor = tryConstructorExtended (objectClass, parameterClasses[1], parameterClasses[0]);
+					if (null==objectContructor)
+						// Try using only first parameter
+						objectContructor = tryConstructorExtended (objectClass, parameterClasses[0]);
+					if (null==objectContructor)
+						// Try using only second parameter
+						objectContructor = tryConstructorExtended (objectClass, parameterClasses[1]);					
+					if (null==objectContructor)
+						// Try default constructor
+						objectContructor = tryConstructor (objectClass);
+				}
+				else if (parameterClasses.length==3) {
+					// Try parameter permutations
+					for (int[] p : new int[][]{new int[]{0,2,1}, new int[]{1,0,2}, new int[]{1,2,0}, new int[]{2,0,1}, new int[]{2,1,0}}) {
+						objectContructor = tryConstructorExtended(objectClass, parameterClasses[p[0]], parameterClasses[p[1]], parameterClasses[p[2]]);
+						if (null==objectContructor) break;
+					} 
+				}
+			}
+			
+			if (null==objectContructor) {
+				if (DebugFile.trace) {
+					StringBuilder variants = new StringBuilder();
+					if (parameterClasses!=null) {
+						if (parameterClasses.length>0) {
+							variants.append("[");
+							for (int c=0; c<parameterClasses.length; c++) {
+								variants.append(parameterClasses[c].getName());
+								if (c<parameterClasses.length-1)
+									variants.append(",");
+							}
+							variants.append("], ");
+						}
+						if (parameterClasses.length==2) {
+							variants.append("[").append(parameterClasses[0].getName()).append("], ");
+							variants.append("[").append(parameterClasses[1].getName()).append("]");
+						}
+					}
+					DebugFile.writeln("No suitable constructor found for "+objectClass.getName()+" after trying "+variants.toString()+(variants.length()>0 ? " and " : "")+" parameterless default constructor");
+				}
+			}
+			if (null!=objectContructor)
+				constructorCache.put(constructorSignature, objectContructor);
 		}
 		return objectContructor;
 	}
@@ -104,16 +158,140 @@ public class ObjectFactory {
 		return parameterClasses;
 	}
 
+	private static String signature(Class<? extends Object> objectClass, Class<?>[] parameterClasses) {
+		StringBuilder sign = new StringBuilder(256);
+		sign.append(objectClass.getName());
+		sign.append("(");
+		if (parameterClasses!=null) {
+			final int paramCount = parameterClasses.length;
+			for (int p=0; p<paramCount; p++)
+				sign.append(parameterClasses[p].getName()).append(p<paramCount-1 ? "," : "");
+		}
+		sign.append(")");
+		return sign.toString();
+	}
+	
+	private static void getSuperClasses(Class<?> clss, List<Class<?>> chain) {
+		Class<?> superClss = clss.getSuperclass();
+		if (superClss!=null) {
+			chain.add(superClss);
+			getSuperClasses(superClss, chain);
+		}
+	}
+
+	private static void getInterfaces(Class<?> clss, List<Class<?>> chain) {
+		Class<?>[] intfaces = clss.getInterfaces();
+		if (null!=intfaces && intfaces.length>0) {
+			for (Class<?> iface : intfaces) {
+				chain.add(iface);
+				getInterfaces(iface, chain);
+			}
+		}
+	}
+
+	private static List<Class<?>[]> combinations(List<List<Class<?>>> parametersClasses) {
+		List<Class<?>[]> combined = new LinkedList<>();
+		final int paramCount = parametersClasses.size();
+		if (paramCount>8)
+			throw new IllegalArgumentException("Cannot create combinations for more than 8 parameter classes");
+		for (Class<?> first : parametersClasses.get(0)) {
+			Class<?>[] combination = new Class<?>[paramCount];
+			combination[0] = first;
+			if (paramCount>1) {
+				for (Class<?> second : parametersClasses.get(1)) {
+					combination[1] = second;
+					if (paramCount>2) {
+						for (Class<?> third : parametersClasses.get(2)) {
+							combination[2] = third;
+							if (paramCount>3) {
+								for (Class<?> fourth : parametersClasses.get(3)) {
+									combination[3] = fourth;
+									if (paramCount>4) {
+										for (Class<?> fifth : parametersClasses.get(4)) {
+											combination[4] = fifth;
+											if (paramCount>5) {
+												for (Class<?> sixth : parametersClasses.get(5)) {
+													combination[5] = sixth;
+													if (paramCount>6) {
+														for (Class<?> seventh : parametersClasses.get(6)) {
+															combination[6] = seventh;
+															if (paramCount>7) {
+																for (Class<?> eighth : parametersClasses.get(6)) {
+																	combination[7] = eighth;
+																}
+															}
+														}
+													}
+												}
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+			combined.add(combination);
+		}
+		return combined;
+	}
+
+	private static Constructor<? extends Object> tryConstructorExtended(Class<? extends Object> objectClass, Class<?>... parameterClasses) {
+		Constructor<? extends Object> objectConstructor = tryConstructor(objectClass, parameterClasses);
+		if (null==objectConstructor) {
+			
+			// Try all superclasses and implemented interfaces of given parameter class
+			if (parameterClasses.length==1) {
+				List<Class<?>> chain = new LinkedList<>();
+				getSuperClasses(parameterClasses[0], chain);
+				getInterfaces(parameterClasses[0], chain);
+				for (Class<?> clss : chain) {
+					objectConstructor = tryConstructor(objectClass, clss);
+					if (null!=objectConstructor) break;
+				}
+			
+			} else if (parameterClasses.length>1) {
+				
+				// Try all the combinations of superclasses and implemented interfaces of given parameter classes
+				List<List<Class<?>>> variants = new LinkedList<>();
+				for (Class<?> pclss : parameterClasses) {
+					List<Class<?>> supersi = new LinkedList<>();
+					getSuperClasses(pclss, supersi);
+					getInterfaces(pclss, supersi);
+					variants.add(supersi);
+				}
+				for (Class<?>[] paramClasses : combinations(variants)) {
+					objectConstructor = tryConstructor(objectClass, paramClasses);
+					if (null!=objectConstructor) break;
+				}
+			}
+		}
+		return objectConstructor;
+	}
+	
 	protected static Constructor<? extends Object> tryConstructor(Class<? extends Object> objectClass, Class<?>... parameterClasses) {
 		Constructor<? extends Object> objectConstructor = null;
 		try {
-			if (parameterClasses==null || parameterClasses.length==0)
+			if (parameterClasses==null || parameterClasses.length==0) {
 				objectConstructor = objectClass.getConstructor();
-			else
+			} else {
 				objectConstructor = objectClass.getConstructor(parameterClasses);
+			}
+		}
+		catch (NoSuchMethodException notfound) {
+			if (DebugFile.trace) {
+				StringBuilder paramClassNames = new StringBuilder();
+				paramClassNames.append("(");
+				if (parameterClasses!=null) {
+					for (int p=0; p<parameterClasses.length; p++)
+						paramClassNames.append(parameterClasses[p].getName()).append(p<parameterClasses.length-1 ? "," : "");
+				}
+				paramClassNames.append(")");					
+				DebugFile.writeln("no constructor with signature " + paramClassNames.toString() + " found for " + objectClass.getName());
+			}	
 		}
 		catch (SecurityException secxcpt) { }
-		catch (NoSuchMethodException notfound) { }
 		return objectConstructor;
 	}
 
