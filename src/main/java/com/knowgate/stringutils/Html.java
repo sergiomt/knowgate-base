@@ -16,7 +16,7 @@ public class Html {
 	/**
 	 * <p>Return text encoded as XHTML.</p>
 	 * ASCII-7 characters [0..127] are returned as they are,
-	 * any other character is returned as &#<i>code</i>;
+	 * any other character is returned as &amp;#<i>code</i>;
 	 * Double quotes and angle brackets are also escaped.
 	 * @param text String
 	 * @return String

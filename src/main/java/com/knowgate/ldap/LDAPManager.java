@@ -81,7 +81,7 @@ public interface LDAPManager extends AutoCloseable {
    * The directory is searched from the connection string key.<br>
    * For example if ldapconnect connection property is ldap://192.168.1.1:389/dc=auth,dc=com
    * then only entries under "dc=auth,dc=com" will be searched
-   * @param sSearchString String LDAP search string, for example "(&(ou=Users)(cn=johnp))"
+   * @param sSearchString String LDAP search string, for example "(&amp;(ou=Users)(cn=johnp))"
    * @return String DN of firt entry found match the search criteria or null if no entry was found matching the criteria
    * @throws LDAPException
    */
@@ -91,6 +91,7 @@ public interface LDAPManager extends AutoCloseable {
   
   /**
    * Delete an LDAP entry
+   * @param sDN String
    * @throws LDAPException
    * @throws IllegalStateException If not connected to LDAP
    */

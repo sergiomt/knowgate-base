@@ -26,8 +26,8 @@ public class ClassSpaceHelper {
 	 * <p>Cartesian product of two Class arrays.</p>
 	 * For example, for {A,B,C} {X,Y,Z} it'd be:
 	 * List(9) = ({A,X},{A,Y},{A,Z},{B,X},{B,Y},{B,Z},{C,X},{C,Y},{C,Z})
-	 * @param Class&lt;?&gt;[]
-	 * @param Class&lt;?&gt;[]
+	 * @param classes1 Class&lt;?&gt;[]
+	 * @param classes2 Class&lt;?&gt;[]
 	 * @return List&lt;Class&lt;?&gt;[2]&gt; Each element in the list will be an array of two classes
 	 */
 	public static List<Class<?>[]> cartesianProduct(Class<?>[] classes1, Class<?>[] classes2) {

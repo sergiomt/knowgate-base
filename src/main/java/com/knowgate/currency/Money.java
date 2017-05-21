@@ -42,6 +42,7 @@ public class Money extends BigDecimal {
   // ---------------------------------------------------------------------------
 
   /**
+   * @param sVal String
    * @throws UnsupportedOperationException
    */
   private Money(String sVal) throws UnsupportedOperationException {
@@ -53,6 +54,7 @@ public class Money extends BigDecimal {
 
   /**
    * Constructor that makes a copy from another Money value
+   * @param oVal Money
    */
   public Money(Money oVal) {
     super(((BigDecimal) oVal).toString());
@@ -173,7 +175,7 @@ public class Money extends BigDecimal {
 
    /**
     * Compare to money amounts with the same currency
-    * @param Money
+    * @param oMny Money
     * @return int Zero if this amount is equal to given amount.
     * Less than zero if if this amount is less than given amount.
     * More than zero if if this amount is greater than given amount.
@@ -258,7 +260,9 @@ public class Money extends BigDecimal {
    * If there is only a comma or a dot then it is assumed to be de decimal delimiter.
    * If both comma and dot are present, then the leftmost of them is assumed to
    * be the thousands delimiter and the rightmost is the decimal delimiter.
-   * Any letters and currency symbols {€$£¤¢¥#ƒ&} are ignored
+   * Any letters and currency symbols {€$£¤¢¥#ƒ&amp;} are ignored
+   * @param sVal String
+   * @return boolean
    */
   public static boolean isMoney (String sVal) {
     if (sVal==null) return false;
@@ -373,7 +377,7 @@ public class Money extends BigDecimal {
 
   /**
    * <p>Convert <b>this</b> money to another currency</p>
-   * @param oTarget Target CurrencyCode
+   * @param sTarget Target CurrencyCode
    * @param oRatio BigDecimal Conversion ratio
    * @return Money if <b>this</b> CurrencyCode is the same as oTarget
    * then <b>this</b> is returned without any modification,

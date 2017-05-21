@@ -51,6 +51,7 @@ public class StreamPipe {
    * <b>Create synchronous or asynchronous stream conector.</b>
    * between() methods do not return until end of input stream is reached and
    * written into ouput stream.
+   * @param bSync boolean
    */
   public StreamPipe (boolean bSync) {
     bSynchronous = bSync;

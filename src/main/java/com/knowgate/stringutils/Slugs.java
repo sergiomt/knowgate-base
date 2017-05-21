@@ -27,7 +27,9 @@ public class Slugs {
 	  }
 	  
 	  /**
-	   * Restrict an ASCII-8 String to an ASCII-7 String
+	   * Restrict to an ASCII-7 String
+	   * @param sStrIn String
+	   * @return String
 	   */
 	  public static String slugify (String sStrIn) {
 	    if (sStrIn==null) return null;

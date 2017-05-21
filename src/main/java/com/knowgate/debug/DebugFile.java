@@ -189,7 +189,7 @@ public final class DebugFile {
 
   /**
    * Write trace and append line feed
-   * @param str
+   * @param str String
    */
   public static void writeln(String str) {
     FileWriter oDebugWriter;
@@ -221,7 +221,7 @@ public final class DebugFile {
 
   /**
    * Write trace and append line feed
-   * @param str
+   * @param str String to be written
    */
   public static void writeln(char[] str) {
     FileWriter oDebugWriter;

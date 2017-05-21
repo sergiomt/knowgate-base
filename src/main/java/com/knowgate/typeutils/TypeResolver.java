@@ -90,27 +90,27 @@ public final class TypeResolver {
 	}
 
 	/**
-	 * Returns the raw class representing the argument for the {@code type} using type variable information from the
-	 * {@code subType}. If no arguments can be resolved then {@code Unknown.class} is returned.
+	 * Returns the raw class representing the argument for the type using type variable information from the
+	 * {@code subType}. If no arguments can be resolved then Unknown.class is returned.
 	 * 
 	 * @param type to resolve argument for
 	 * @param subType to extract type variable information from
-	 * @return argument for {@code type} else {@link Unknown.class} if no type arguments are declared
-	 * @throws IllegalArgumentException if more or less than one argument is resolved for the {@code type}
+	 * @return argument for type else Unknown.class if no type arguments are declared
+	 * @throws IllegalArgumentException if more or less than one argument is resolved for the type
 	 */
 	public static <T, S extends T> Class<?> resolveRawArgument(Class<T> type, Class<S> subType) {
 		return resolveRawArgument(resolveGenericType(type, subType), subType);
 	}
 
 	/**
-	 * Returns the raw class representing the argument for the {@code genericType} using type variable information from
-	 * the {@code subType}. If {@code genericType} is an instance of class, then {@code genericType} is returned. If no
-	 * arguments can be resolved then {@code Unknown.class} is returned.
+	 * Returns the raw class representing the argument for the genericType using type variable information from
+	 * the subType. If genericType is an instance of class, then genericType is returned. If no
+	 * arguments can be resolved then Unknown.class is returned.
 	 * 
 	 * @param genericType to resolve argument for
 	 * @param subType to extract type variable information from
-	 * @return argument for {@code genericType} else {@link Unknown.class} if no type arguments are declared
-	 * @throws IllegalArgumentException if more or less than one argument is resolved for the {@code genericType}
+	 * @return argument for genericType else Unknown.class if no type arguments are declared
+	 * @throws IllegalArgumentException if more or less than one argument is resolved for the genericType
 	 */
 	public static Class<?> resolveRawArgument(Type genericType, Class<?> subType) {
 		Class<?>[] arguments = resolveRawArguments(genericType, subType);
@@ -125,27 +125,26 @@ public final class TypeResolver {
 	}
 
 	/**
-	 * Returns an array of raw classes representing arguments for the {@code type} using type variable information from
-	 * the {@code subType}. Arguments for {@code type} that cannot be resolved are returned as {@code Unknown.class}. If
-	 * no arguments can be resolved then {@code null} is returned.
+	 * Returns an array of raw classes representing arguments for the type using type variable information from
+	 * the subType. Arguments for type that cannot be resolved are returned as Unknown.class. If
+	 * no arguments can be resolved then null is returned.
 	 * 
 	 * @param type to resolve arguments for
 	 * @param subType to extract type variable information from
-	 * @return array of raw classes representing arguments for the {@code type} else {@code null} if no type arguments are
-	 *         declared
+	 * @return array of raw classes representing arguments for the type else null if no type arguments are declared
 	 */
 	public static <T, S extends T> Class<?>[] resolveRawArguments(Class<T> type, Class<S> subType) {
 		return resolveRawArguments(resolveGenericType(type, subType), subType);
 	}
 
 	/**
-	 * Returns an array of raw classes representing arguments for the {@code genericType} using type variable information
-	 * from the {@code subType}. Arguments for {@code genericType} that cannot be resolved are returned as
-	 * {@code Unknown.class}. If no arguments can be resolved then {@code null} is returned.
+	 * Returns an array of raw classes representing arguments for the genericType using type variable information
+	 * from the subType. Arguments for genericType that cannot be resolved are returned as
+	 * Unknown.class. If no arguments can be resolved then null is returned.
 	 * 
 	 * @param genericType to resolve arguments for
 	 * @param subType to extract type variable information from
-	 * @return array of raw classes representing arguments for the {@code genericType} else {@code null} if no type
+	 * @return array of raw classes representing arguments for the genericType else null if no type
 	 *         arguments are declared
 	 */
 	public static Class<?>[] resolveRawArguments(Type genericType, Class<?> subType) {

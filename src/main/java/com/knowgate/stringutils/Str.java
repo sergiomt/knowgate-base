@@ -267,8 +267,9 @@ public class Str {
 	/**
 	 * Get the leftmost characters of a String
 	 * @param sSource Source String
-	 * @param cChars Number of characters
-	 * @throws ArrayIndexOutOfBoundsException If nChars<0
+	 * @param nChars Number of characters
+	 * @return String
+	 * @throws ArrayIndexOutOfBoundsException If nChars&lt;0
 	 */
 	public static String left(String sSource, int nChars) throws ArrayIndexOutOfBoundsException {
 		if (sSource==null) return null;
@@ -305,13 +306,14 @@ public class Str {
 	/**
 	 * <p>Calculate Levenshtein distance between two strings</p>
 	 * The Levenshtein distance is defined as the minimal number of characters
-	 * you have to replace, insert or delete to transform str1 into str2.
+	 * you have to replace, insert or delete to transform s into t.
 	 * The complexity of the algorithm is O(m*n),
-	 * where n and m are the length of str1 and str2.
-	 * @return Levenshtein distance between str1 and str2
-	 * @throws IllegalArgumentException if either str1 or str2 is <b>null</b>
-	 * @author Michael Gilleland & Chas Emerick
-	 * @see <a href="http://www.merriampark.com/ldjava.htm">http://www.merriampark.com/ldjava.htm</a>
+	 * where n and m are the length of s and t.
+	 * @param s String
+	 * @param t String
+	 * @return Levenshtein distance between s and t
+	 * @throws IllegalArgumentException if either s or t is <b>null</b>
+	 * @see <a href="http://www.merriampark.com/ldjava.htm">Michael Gilleland &amp; Chas Emerick</a>
 	 * @since 4.0
 	 */
 

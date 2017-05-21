@@ -56,6 +56,7 @@ public CurrencyCode(int iNum, String sAlpha, String sSign, String sId, String sN
 
 /**
  * Corresponding java.util.Currency object
+ * @return Currency
  */
 public Currency currency() {
   return jCurrency;
@@ -111,8 +112,8 @@ public int numericCode() {
 
 /**
  * Two currencies will be the same if the have the same alphaCode()
- * @param CurrencyCode
- * @return
+ * @param oCurCod CurrencyCode
+ * @return boolean
  */
 public boolean equals(CurrencyCode oCurCod) {
   if (sAlphaCode==null || oCurCod.alphaCode()==null)
@@ -141,6 +142,7 @@ public String toString() {
 
 /**
  * Get CurrencyCode for a 3 letter currency identifier
+ * @param sAlphaCode
  * @return CurrencyCode instance for given code or <b>null</b> if no currency was found for that code
  */
 public static CurrencyCode currencyCodeFor (String sAlphaCode) {

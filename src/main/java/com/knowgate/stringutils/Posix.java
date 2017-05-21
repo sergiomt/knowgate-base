@@ -17,6 +17,7 @@ public class Posix {
 
 	  /**
 	   * Replace any vowel by a POSIX Regular Expression representing all its accentuated variants
+	   * @param sText String
 	   * @return If Input String is Andrés Lozäno
 	   * the returned value will be something like [AÁÀÄÂAÅAAAÃ]ndr[eéàëêeeeee]s L[oóòöôoooøõo]z[aáàäâaåaaaã]n[oóòöôoooøõo]
 	   */

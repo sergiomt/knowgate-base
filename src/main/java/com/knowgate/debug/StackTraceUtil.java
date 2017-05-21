@@ -25,7 +25,7 @@ public final class StackTraceUtil {
 
   /**
    * Get the stack trace of a throwable  
-   * @param Throwable 
+   * @param aThrowable Throwable 
    * @return String
    * @throws IOException
   */	
