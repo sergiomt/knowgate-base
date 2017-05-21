@@ -84,29 +84,39 @@ public class ObjectFactory {
 				}
 			}
 			
-			if (null==objectContructor) {
-				if (DebugFile.trace) {
-					StringBuilder variants = new StringBuilder();
+			if (DebugFile.trace) {
+				StringBuilder variants = new StringBuilder();
+				if (null==objectContructor) {
 					if (parameterClasses!=null) {
 						if (parameterClasses.length>0) {
-							variants.append("[");
+							variants.append("{");
 							for (int c=0; c<parameterClasses.length; c++) {
 								variants.append(parameterClasses[c].getName());
 								if (c<parameterClasses.length-1)
 									variants.append(",");
 							}
-							variants.append("], ");
+							variants.append("}, ");
 						}
 						if (parameterClasses.length==2) {
-							variants.append("[").append(parameterClasses[0].getName()).append("], ");
-							variants.append("[").append(parameterClasses[1].getName()).append("]");
+							variants.append("{").append(parameterClasses[0].getName()).append("}, ");
+							variants.append("{").append(parameterClasses[1].getName()).append("}");
 						}
 					}
 					DebugFile.writeln("No suitable constructor found for "+objectClass.getName()+" after trying "+variants.toString()+(variants.length()>0 ? " and " : "")+" parameterless default constructor");
+				} else {
+					variants.append("{");
+					for (Class<?> t : objectContructor.getParameterTypes())
+						variants.append(t.getName()).append(",");
+					variants.setLength(variants.length()-1);
+					variants.append("}");
+					DebugFile.writeln("Matched constructor "+objectClass.getName()+variants.toString());
 				}
 			}
 			if (null!=objectContructor)
 				constructorCache.put(constructorSignature, objectContructor);
+		} else {
+			if (DebugFile.trace)
+				DebugFile.writeln("ObjectFactory hit cached constructor "+constructorSignature);
 		}
 		return objectContructor;
 	}
