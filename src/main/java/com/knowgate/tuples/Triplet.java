@@ -13,30 +13,34 @@ package com.knowgate.tuples;
 
 import java.io.Serializable;
 
-public class Triplet<T,S,R> implements Serializable {
+public class Triplet<U,V,W> implements Serializable {
 
   private static final long serialVersionUID = 8L;
 
-  private T val1;
-  private S val2;
-  private R val3;
+  private U val1;
+  private V val2;
+  private W val3;
   
-  public Triplet(T val1, S val2, R val3) {
+  public Triplet(U val1, V val2, W val3) {
   	this.val1 = val1;
   	this.val2 = val2;
   	this.val3 = val3;
   }
   
-  public T $1() {
+  public U $1() {
   	return val1;
   }
 
-  public S $2() {
+  public V $2() {
   	return val2;
   }
 
-  public R $3() {
+  public W $3() {
   	return val3;
   }
-  
+
+  public static Triplet<String,String,String> T$(String val1, String val2, String val3) {
+	  return new Triplet<String,String,String>(val1, val2, val3);
+  }
+
 }
