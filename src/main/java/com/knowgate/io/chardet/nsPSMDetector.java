@@ -262,12 +262,7 @@ public abstract class nsPSMDetector {
 	   {
 		st = nsVerifier.getNextState( mVerifier[mItemIdx[j]], 
 						b, mState[j]) ;
-//if (st != 0)
-//System.out.println( "state(0x" + Integer.toHexString(0xFF&b) +") =>"+ Integer.toHexString(st&0xFF)+ " " + mVerifier[mItemIdx[j]].charset());
-
 		if (st == nsVerifier.eItsMe) {
-
-//System.out.println( "eItsMe(0x" + Integer.toHexString(0xFF&b) +") =>"+ mVerifier[mItemIdx[j]].charset());
 
 		   Report( mVerifier[mItemIdx[j]].charset() );
 		   mDone = true ;
@@ -275,7 +270,6 @@ public abstract class nsPSMDetector {
 
 	        } else if (st == nsVerifier.eError ) {
 
-//System.out.println( "eNotMe(0x" + Integer.toHexString(0xFF&b) +") =>"+ mVerifier[mItemIdx[j]].charset());
 		   mItems--;
 		   if (j < mItems ) {
 			mItemIdx[j] = mItemIdx[mItems];	

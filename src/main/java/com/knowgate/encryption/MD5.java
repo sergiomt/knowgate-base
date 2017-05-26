@@ -201,11 +201,6 @@ public class MD5 {
 	(((int) (buffer[j + 2 + shift] & 0xff)) << 16) |
 	(((int) (buffer[j + 3 + shift] & 0xff)) << 24);
 
-/*      System.out.println("out[" + i + "] = \t" +
-			 ((int) buffer[j + 0 + shift] & 0xff) + "\t|\t" +
-			 ((int) buffer[j + 1 + shift] & 0xff) + "\t|\t" +
-			 ((int) buffer[j + 2 + shift] & 0xff) + "\t|\t" +
-			 ((int) buffer[j + 3 + shift] & 0xff));*/
     }
 
     return out;
