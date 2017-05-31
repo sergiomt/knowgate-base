@@ -54,10 +54,31 @@
           	<additionalparam>-Xdoclint:none</additionalparam>
         </configuration>
       </plugin>
-    </plugins>
+	  <!--
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-release-plugin</artifactId>
+        <version>2.5.3</version>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-gpg-plugin</artifactId>
+		<version>1.6</version>
+        <executions>
+          <execution>
+            <id>sign-artifacts</id>
+			<phase>verify</phase>
+            <goals>
+              <goal>sign</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+	  -->
+	  </plugins>
   </build>
   <properties>
-    <skipTests>false</skipTests>
+    <skipTests>true</skipTests>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
   <profiles>
