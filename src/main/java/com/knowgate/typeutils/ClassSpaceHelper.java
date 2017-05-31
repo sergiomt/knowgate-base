@@ -31,7 +31,7 @@ public class ClassSpaceHelper {
 	 * @return List&lt;Class&lt;?&gt;[2]&gt; Each element in the list will be an array of two classes
 	 */
 	public static List<Class<?>[]> cartesianProduct(Class<?>[] classes1, Class<?>[] classes2) {
-		List<Class<?>[]> product = new ArrayList<>(classes1.length * classes2.length);
+		List<Class<?>[]> product = new ArrayList<Class<?>[]>(classes1.length * classes2.length);
 		for (Class<?> c1 : classes1)
 			for (Class<?> c2 : classes2)
 				product.add(new Class<?>[] {c1,c2});
@@ -48,7 +48,7 @@ public class ClassSpaceHelper {
 	 */
 	public static List<Class<?>[]> addDimension(List<Class<?>[]> baseVectors, Class<?>[] newDimension) {
 		final int vectorCount = baseVectors.size() * newDimension.length;
-		List<Class<?>[]> extended = new ArrayList<>(vectorCount);
+		List<Class<?>[]> extended = new ArrayList<Class<?>[]>(vectorCount);
 		for (Class<?>[] baseVector : baseVectors) {
 			for (Class<?> dim : newDimension) {
 				Class<?>[] newVector = Arrays.copyOf(baseVector, baseVector.length+1);

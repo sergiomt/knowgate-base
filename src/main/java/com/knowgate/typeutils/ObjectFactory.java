@@ -41,7 +41,7 @@ import com.knowgate.debug.DebugFile;
  */
 public class ObjectFactory {
 
-	private static final Map<String, Constructor<? extends Object>> constructorCache = Collections.synchronizedMap(new WeakHashMap<>());
+	private static final Map<String, Constructor<? extends Object>> constructorCache = Collections.synchronizedMap(new WeakHashMap<String, Constructor<? extends Object>>());
 
 	/**
 	 * <p>Get the constructor for a class that matches the given parameter classes.</p>
@@ -212,7 +212,7 @@ public class ObjectFactory {
 	 * @return Class&lt;?&gt;[] Superclasses followed
 	 */
 	public static Class<?>[] getClassTree(Class<?> clss) {
-		List<Class<?>> classTree = new ArrayList<>(16);
+		List<Class<?>> classTree = new ArrayList<Class<?>>(16);
 		classTree.add(clss);
 		getSuperClasses(clss, classTree);
 		classTree.addAll(Arrays.asList(clss.getInterfaces()));		
@@ -269,7 +269,7 @@ public class ObjectFactory {
 				
 				// List all the superclasses and implemented interfaces of the given parameter classes
 				
-				ArrayList<Class<?>[]> variants = new ArrayList<>(paramClassCount);
+				ArrayList<Class<?>[]> variants = new ArrayList<Class<?>[]>(paramClassCount);
 				for (Class<?> pclss : parameterClasses) {
 					variants.add (getClassTree(pclss));
 
