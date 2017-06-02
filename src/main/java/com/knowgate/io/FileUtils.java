@@ -250,7 +250,7 @@ public class FileUtils {
      * @param directory the directory to search in.
      * @param filter the filter to apply to files and directories.
      */
-    private static void innerListFiles(Collection files, File directory,
+    private static void innerListFiles(Collection<File> files, File directory,
             IOFileFilter filter) {
         File[] found = directory.listFiles((FileFilter) filter);
         if (found != null) {
@@ -289,7 +289,7 @@ public class FileUtils {
      * @see com.knowgate.io.filefilter.FileFilterUtils
      * @see com.knowgate.io.filefilter.NameFileFilter
      */
-    public static Collection listFiles(
+    public static Collection<File> listFiles(
             File directory, IOFileFilter fileFilter, IOFileFilter dirFilter) {
         if (!directory.isDirectory()) {
             throw new IllegalArgumentException(
@@ -368,7 +368,7 @@ public class FileUtils {
      * @param recursive  if true all subdirectories are searched as well
      * @return an collection of java.io.File with the matching files
      */
-    public static Collection listFiles(
+    public static Collection<File> listFiles(
             File directory, String[] extensions, boolean recursive) {
         IOFileFilter filter;
         if (extensions == null) {
