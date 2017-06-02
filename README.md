@@ -1,6 +1,6 @@
 # KnowGate Base Libraries
 
-These are foundation libraries compatible with Java 1.6. They include:
+These are foundation libraries compatible with Java 1.7. They include:
 
 ## Debug
 - [Debug traces logger](https://sergiomt.github.io/knowgate-base/com/knowgate/debug/package-summary.html)
