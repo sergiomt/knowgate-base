@@ -25,11 +25,59 @@ import java.io.PrintStream;
 import java.net.UnknownHostException;
 
 /**
- * <p>Write execution traces to a flat text file</p>
- * Traces are written to javatrc.txt file on the specified directory.<br>
- * By default /vagrant/tmp/ on Unix and C:\TEMP\\Debug on Windows.
+ * <p>Write execution traces to Log4j2, a set of text files (one per thread) or STDOUT</p>
+ * <p>
+ * DebugFile will decide where to write debug traces with following algorithm: 
+ * <ol>
+ * <li>If a System property named <code>knowgate.debugfile</code> exists this will be assumed to be the absolute path to the properties file that tells whether Log4j2, files, or stdout must be used for output.</li>
+ * <li>If System <code>knowgate.debugfile</code> is not set then DebugFile will try to read <code>/etc/debugfile.conf</code> on *nix or <code>C:\\Windows\System32\drivers\etc\debugfile.conf on Windows</code></li>
+ * <li>If <code>debugfile.conf</code> is not found the DebugFile will use the package resource at <code>com/knowgate/debug/debugfile.conf</code></li>
+ * <li>Using the properties read from the external .conf file or the internal resource file, DebugFile will decide which output to use.</li>
+ * </ol>
+ * </p>
+ * <h2>Configuration taken from Log4j2</h2>
+ * <p>The default behavior is use a Log4j2 configuration provided by the client application for <code>com.knowgate.debug.DebugFile.class</code>
+ * This configuration file must be placed in the CLASSPATH as described in <a href="https://logging.apache.org/log4j/2.x/manual/configuration.html">Log4j 2.c configuration</a>.</p>
+ * <p>A sample log4j2.xml file looks like:</p>
+ * <code>
+ * &lt;?xml&nbsp;version="1.0"&nbsp;encoding="UTF-8"?&gt;<br>
+ * &lt;Configuration&nbsp;status="debug"&nbsp;strict="true"&nbsp;name="XMLConfigTest"&nbsp;packages="org.apache.logging.log4j.test"&gt;<br>
+ * &nbsp;&nbsp;&lt;Properties&gt;<br>
+ * &nbsp;&nbsp;&nbsp;&nbsp;&lt;Property&nbsp;name="filename"&gt;/var/log/knowgate/debug.log&lt;/Property&gt;<br>
+ * &nbsp;&nbsp;&lt;/Properties&gt;<br>
+ * &nbsp;&nbsp;&lt;Appenders&gt;<br>
+ * &nbsp;&nbsp;&nbsp;&nbsp;&lt;Appender&nbsp;type="File"&nbsp;name="File"&nbsp;fileName="${filename}"&gt;<br>
+ * &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;Layout&nbsp;type="PatternLayout"&gt;<br>
+ * &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;Pattern&gt;%d&nbsp;%p&nbsp;%C{1.}&nbsp;[%t]&nbsp;%m%n&lt;/Pattern&gt;<br>
+ * &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/Layout&gt;<br>
+ * &nbsp;&nbsp;&nbsp;&nbsp;&lt;/Appender&gt;<br>
+ * &nbsp;&nbsp;&nbsp;&nbsp;&lt;Appender&nbsp;type="List"&nbsp;name="List"&gt;<br>
+ * &nbsp;&nbsp;&nbsp;&nbsp;&lt;/Appender&gt;<br>
+ * &nbsp;&nbsp;&lt;/Appenders&gt;<br>
+ * &nbsp;&nbsp;&lt;Loggers&gt;&nbsp;<br>
+ * &nbsp;&nbsp;&nbsp;&nbsp;&lt;Logger&nbsp;name="com.knowgate.debug"&nbsp;level="debug"&nbsp;additivity="false"&gt;<br>
+ * &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;AppenderRef&nbsp;ref="File"/&gt;<br>
+ * &nbsp;&nbsp;&nbsp;&nbsp;&lt;/Logger&gt;<br>
+ * &nbsp;&nbsp;&nbsp;&nbsp;&lt;Root&nbsp;level="trace"&gt;<br>
+ * &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;AppenderRef&nbsp;ref="List"/&gt;<br>
+ * &nbsp;&nbsp;&nbsp;&nbsp;&lt;/Root&gt;<br>
+ * &nbsp;&nbsp;&lt;/Loggers&gt;<br>
+ * &lt;/Configuration&gt;<br>
+ * </code>
+ * <h2>Configuration taken from debugfile.conf properties</h2>
+ * <p>To avoid using Log4j2 create a properties file at /etc/debugfile.cnf on *nix or C:\Windows\System32\drivers\etc\debugfile.conf on Windows.</p>
+ * <p>The file must contain the following properties:</p>
+ * <code>
+ * # Accepted values are file stdout and log4j<br>
+ * sink=file<br><br>
+ * # Only applies if sink is file or stdout otherwise debug is controlled by Log4J<br>
+ * debug=true<br><br>
+ * # Only applies if sink is file<br>
+ * debugdir_win32=C:\\TEMP\\Debug\\<br>
+ * debugdir_linux=/var/log/knowgate/<br>
+ * </code>
  * @author Sergio Montoro Ten
- * @version 7.0
+ * @version 9.0
  */
 public final class DebugFile {
 
@@ -46,10 +94,13 @@ public final class DebugFile {
 	
 	private static String filePath;
 
+	/**
+	 * One of DUMP_TO_LOG4J, DUMP_TO_FILE or DUMP_TO_STDOUT constants
+	 */
 	public static short dumpTo;
 
 	/**
-	 * Activate/Deactivate trace output
+	 * Activate/Deactivate debug output
 	 */
 	public static boolean trace;
 	
@@ -62,6 +113,13 @@ public final class DebugFile {
 		refresh();
 	}
 	
+	/**
+	 * <p>Get absolute path of the debugfile.conf file</p>
+	 * <p>This is not the Log4j2 file at the appender but the properties files
+	 * used to set whether DebugFile will use Log4j2, stdout or its own set of output files.</p>
+	 * <p>By default is /etc/debugfile.conf on *nix and C:\Windows\System32\drivers\etc\debugfile.conf on Windows.</p>
+	 * @return String File path
+	 */
 	public static String getConfFile() {
 		final String debugfile = System.getProperty("knowgate.debugfile");
 		if (null==confFile)
@@ -77,15 +135,20 @@ public final class DebugFile {
 			return confFile;		
 	}
 
+	/**
+	 * <p>Set absolute path to debugfile properties file</p>
+	 * @param confFilePath String
+	 */
 	public static void setConfFile(final String confFilePath) {
 		confFile = confFilePath;
 	}
 
+	/**
+	 * <p>Refresh DebugFile and here on use changes made in configuration.</p>
+	 */
 	public static void refresh() {
-		System.out.println("Refreshing debug config");
 		File etc = new File(getConfFile());
 		if (etc.exists() && etc.isFile() && etc.canRead()) {
-			System.out.println("using config file "+etc.getAbsolutePath());
 			setConfFile(etc.getAbsolutePath());
 			FileInputStream fInStrm;
 			try {
@@ -98,7 +161,6 @@ public final class DebugFile {
 				}
 			} catch (FileNotFoundException neverthrown) { }
 		} else {
-			System.out.println("using internal config at com/knowgate/debug/debugfile.conf");
 			try {
 				Class oThisClass = Class.forName("com.knowgate.debug.DebugFile");
 				InputStream rInStrm = oThisClass.getResourceAsStream("debugfile.conf");
@@ -108,13 +170,10 @@ public final class DebugFile {
 			} catch (IOException ioe) {
 				System.err.println("IOException at com.knowgate.debug.DebugFile "+ioe.getMessage());
 			}
-		}
-		System.out.println("Debug config refreshed");
-					 
+		}					 
 	} // getDebugPath
 
 	private static void readDebugConfFromPropertiesInputStream(InputStream oInStrm) {
-		System.out.println("Begin readDebugConfFromPropertiesInputStream()");
 		String sWin32DebugDir = DEFAULT_TMP_WIN32;
 		String sLinuxDebugDir = DEFAULT_TMP_LINUX;
 		try {
@@ -125,7 +184,6 @@ public final class DebugFile {
 				
 				final String debug = oProps.getProperty("debug", "false");
 				trace = debug.equalsIgnoreCase("true") || debug.equalsIgnoreCase("yes") || debug.equalsIgnoreCase("on") || debug.equalsIgnoreCase("1");
-				System.out.println("trace is "+trace);
 				
 				final String sink = oProps.getProperty("sink", "file");
 				if (sink.equalsIgnoreCase("file"))
@@ -134,8 +192,6 @@ public final class DebugFile {
 					dumpTo = DUMP_TO_LOG4J;
 				else
 					dumpTo = DUMP_TO_STDOUT;
-
-				System.out.println("dumpTo is "+dumpTo);
 
 				if (dumpTo==DUMP_TO_FILE) {
 					sWin32DebugDir = oProps.getProperty("debugdir_win32", DEFAULT_TMP_WIN32);
@@ -153,7 +209,6 @@ public final class DebugFile {
 			debugPath = sWin32DebugDir;
 		else
 			debugPath = sLinuxDebugDir;
-		System.out.println("End readDebugConfFromPropertiesInputStream()");
 	}
 
 	private static String chomp(String sSource, String cEndsWith) {
@@ -173,8 +228,7 @@ public final class DebugFile {
 	 * get the directory where javatrc.txt files are generated. If
 	 * knowgate.debugdir is not set then read debugdir.cnf resource file in this
 	 * package. If knowgate.debugdir is not set and debugdir.cnf is not found or
-	 * empty the return /tmp on Unix systems and C:\Temp\Debug on
-	 * Windows
+	 * empty the return /tmp on Unix systems and C:\Temp\Debug on Windows
 	 * @param threadId long Files are generated per thread, so inform which one is dumping the traces
 	 * @return String Full path to the file where the current thread will write its traces
 	 */
@@ -425,12 +479,6 @@ public final class DebugFile {
         i.printLoggingInfo();
         out.println("KEY MANAGER");
         i.printKeyManagerInfo();
-        out.println("DISPLAY DEVICES");
-        i.printDisplayInfo();
-        out.println("FONTS");
-        i.printFontsInfo();
-        out.println("LOCALES");
-        i.printLocaleInfo();
 		
         DebugFile.writeln(new String(byteOut.toByteArray()));
         

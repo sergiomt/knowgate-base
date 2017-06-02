@@ -16,8 +16,15 @@ import java.io.IOException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+/**
+ * <p>Wrapper over org.apache.logging.log4j.Logger for com.knowgate.DebugFile</p>
+ * @author Sergio Montoro Ten
+ */
 public class Log {
 	
+	/**
+	 * Log4j2 logger for DebugFile
+	 */
 	public static Logger out = LogManager.getLogger(DebugFile.class);
 
 	/**
