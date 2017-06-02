@@ -17,7 +17,7 @@ public class ErrorHandler  {
       FileOutputStream oDebugStrm = null;
 
       try {
-        oDebugStrm = new FileOutputStream(DebugFile.getFile(), true);
+        oDebugStrm = new FileOutputStream(DebugFile.getFile(Thread.currentThread().getId()), true);
         oDebugWriter = new PrintWriter(oDebugStrm);
         ex.printStackTrace(oDebugWriter);
         if (null!=oDebugWriter) oDebugWriter.close();
