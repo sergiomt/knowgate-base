@@ -11,6 +11,10 @@ package com.knowgate.stringutils;
  * KIND, either express or implied.
  */
 
+/**
+ * HTML helper methods
+ * @author Sergio Montoro Ten
+ */
 public class Html {
 
 	/**
