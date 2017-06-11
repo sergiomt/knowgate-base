@@ -6,7 +6,9 @@
   <version>9.0</version>
   <packaging>jar</packaging>
   <name>knowgate-base</name>
-  <url>http://maven.apache.org</url>
+  <description>KnowGate base libraries: arrays, string, IO, localisation, MD5, RC4, debug log traces and object factory</description>
+  <inceptionYear>2001</inceptionYear>
+  <url>https://github.com/sergiomt/knowgate-base</url>
   <licenses>
     <license>
       <name>The Apache Software License, Version 2.0</name>
