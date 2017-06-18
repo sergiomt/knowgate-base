@@ -65,7 +65,7 @@ import java.net.UnknownHostException;
  * &lt;/Configuration&gt;<br>
  * </code>
  * <h2>Configuration taken from debugfile.conf properties</h2>
- * <p>To avoid using Log4j2 create a properties file at /etc/debugfile.cnf on *nix or C:\Windows\System32\drivers\etc\debugfile.conf on Windows.</p>
+ * <p>To avoid using Log4j2 create a properties file at /etc/debugfile.conf on *nix or C:\Windows\System32\drivers\etc\debugfile.conf on Windows.</p>
  * <p>The file must contain the following properties:</p>
  * <code>
  * # Accepted values are file stdout and log4j<br>
