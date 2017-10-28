@@ -107,7 +107,7 @@ public class ObjectFactory {
 					variants.append("{");
 					for (Class<?> t : objectContructor.getParameterTypes())
 						variants.append(t.getName()).append(",");
-					variants.setLength(variants.length()-1);
+					if (variants.length()>0) variants.setLength(variants.length()-1);
 					variants.append("}");
 					DebugFile.writeln("Matched constructor "+objectClass.getName()+variants.toString());
 				}
@@ -277,7 +277,7 @@ public class ObjectFactory {
 						StringBuilder variations = new StringBuilder();
 						for (Class<?> clazz : variants.get(variants.size()-1))
 							variations.append(clazz.getName()).append(",");
-						variations.setLength(variations.length()-1);
+						if (variations.length()>0) variations.setLength(variations.length()-1);
 						DebugFile.writeln("generated parameters variation {"+variations.toString()+"}");
 					}
 				}

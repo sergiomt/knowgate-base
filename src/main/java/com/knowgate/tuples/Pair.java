@@ -33,8 +33,19 @@ public class Pair<T,S> implements Serializable {
   	return val2;
   }
 
+  public T getName() {
+	return val1;
+  }
+  
+  public S getValue() {
+	return val2;
+  }
+
   public static Pair<String,String> P$(String val1, String val2) {
 	  return new Pair<String,String>(val1, val2);
   }
 
+  public static Pair<String,Object> P_(String val1, Object val2) {
+	  return new Pair<String,Object>(val1, val2);
+  }
 }

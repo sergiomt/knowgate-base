@@ -15,6 +15,11 @@ import java.text.Normalizer;
 
 public class Slugs {
 
+	  /**
+	   * <p>Normalize string and remove non spacing marks</p>
+	   * @param sStrIn String
+	   * @return String
+	   */
 	  public static String transliterate (String sStrIn) {
 		  String x = Normalizer.normalize(sStrIn, Normalizer.Form.NFD);
 
