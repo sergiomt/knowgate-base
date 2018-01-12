@@ -43,6 +43,8 @@ public class ObjectFactory {
 
 	private static final Map<String, Constructor<? extends Object>> constructorCache = Collections.synchronizedMap(new WeakHashMap<String, Constructor<? extends Object>>());
 
+	private static final boolean debug = false;
+
 	/**
 	 * <p>Get the constructor for a class that matches the given parameter classes.</p>
 	 * @param objectClass Class&lt;? extends Object&gt;
@@ -50,8 +52,18 @@ public class ObjectFactory {
 	 * @return Constructor&lt;? extends Object&gt; or <b>null</b> if there is no constructor with given parameters at the class.
 	 * @throws IllegalArgumentException If more than one constructor is suitable for the given arguments but its signature does not exactly match the classes of the parameters
 	 */
+	@SuppressWarnings("unused")
 	public static Constructor<? extends Object> getConstructor(Class<? extends Object> objectClass, Class<?>[] parameterClasses) throws IllegalArgumentException {
 		
+		if (debug && DebugFile.trace) {
+			StringBuilder params = new StringBuilder();
+			if (parameterClasses!=null)
+				for (Class<?> clazz : parameterClasses)
+					params.append(",").append(clazz.getName());
+			DebugFile.writeln("Begin ObjectFactory.getConstructor("+objectClass.getName()+params.toString()+")");
+			DebugFile.incIdent();
+		}
+
 		Constructor<? extends Object> objectContructor = null;
 		
 		final String constructorSignature = signature(objectClass, parameterClasses);
@@ -63,17 +75,24 @@ public class ObjectFactory {
 			// Try to permute first, second and third arguments
 			if (null==objectContructor) {
 				if (parameterClasses.length==2) {
-					// Try parameters in reverse order
+					if (debug && DebugFile.trace)
+						DebugFile.writeln("Trying two parameters in reverse order");
 					objectContructor = tryConstructorExtended (objectClass, parameterClasses[1], parameterClasses[0]);
-					if (null==objectContructor)
-						// Try using only first parameter
+					if (null==objectContructor) {
+						if (debug && DebugFile.trace)
+							DebugFile.writeln("Trying only first parameter");
 						objectContructor = tryConstructorExtended (objectClass, parameterClasses[0]);
-					if (null==objectContructor)
-						// Try using only second parameter
+					}
+					if (null==objectContructor) {
+						if (debug && DebugFile.trace)
+							DebugFile.writeln("Trying only second parameter");
 						objectContructor = tryConstructorExtended (objectClass, parameterClasses[1]);					
-					if (null==objectContructor)
-						// Try default constructor
+					}
+					if (null==objectContructor) {
+						if (debug && DebugFile.trace)
+							DebugFile.writeln("Trying default constructor");
 						objectContructor = tryConstructor (objectClass);
+					}
 				}
 				else if (parameterClasses.length==3) {
 					// Try parameter permutations
@@ -84,7 +103,7 @@ public class ObjectFactory {
 				}
 			}
 			
-			if (DebugFile.trace) {
+			if (debug && DebugFile.trace) {
 				StringBuilder variants = new StringBuilder();
 				if (null==objectContructor) {
 					if (parameterClasses!=null) {
@@ -102,7 +121,7 @@ public class ObjectFactory {
 							variants.append("{").append(parameterClasses[1].getName()).append("}");
 						}
 					}
-					DebugFile.writeln("No suitable constructor found for "+objectClass.getName()+" after trying "+variants.toString()+(variants.length()>0 ? " and " : "")+" parameterless default constructor");
+					DebugFile.writeln("ObjectFactory.getConstructor No suitable constructor found for "+objectClass.getName()+" after trying "+variants.toString()+(variants.length()>0 ? " and " : "")+" parameterless default constructor");
 				} else {
 					variants.append("{");
 					for (Class<?> t : objectContructor.getParameterTypes())
@@ -115,9 +134,15 @@ public class ObjectFactory {
 			if (null!=objectContructor)
 				constructorCache.put(constructorSignature, objectContructor);
 		} else {
-			if (DebugFile.trace)
+			if (debug && DebugFile.trace)
 				DebugFile.writeln("ObjectFactory hit cached constructor "+constructorSignature);
 		}
+
+		if (debug && DebugFile.trace) {
+			DebugFile.decIdent();
+			DebugFile.writeln("End ObjectFactory.getConstructor() " + objectContructor);
+		}
+
 		return objectContructor;
 	}
 
@@ -207,15 +232,50 @@ public class ObjectFactory {
 	}
 	
 	/**
-	 * Get super classes and implemented interfaces of the given class
+	 * Get super classes and interfaces implemented by the given class
 	 * @param clss Class&lt;?&gt;
-	 * @return Class&lt;?&gt;[] Superclasses followed
+	 * @return Class&lt;?&gt;[] Super classes followed by interfaces (including interfaces implemented by super classes)
 	 */
+	@SuppressWarnings("unused")
 	public static Class<?>[] getClassTree(Class<?> clss) {
+		if (debug && DebugFile.trace) {
+			DebugFile.writeln("Begin ObjectFactory.getClassTree("+clss.getName()+")");
+			DebugFile.incIdent();
+		}
+		
 		List<Class<?>> classTree = new ArrayList<Class<?>>(16);
+		
 		classTree.add(clss);
 		getSuperClasses(clss, classTree);
-		classTree.addAll(Arrays.asList(clss.getInterfaces()));		
+
+		if (debug && DebugFile.trace) {
+			StringBuilder supers = new StringBuilder();
+			for (Class<?> clzz : classTree)
+				supers.append(supers.length()==0 ? "" : ",").append(clzz.getName());
+			DebugFile.writeln("Super classes are {"+supers.toString()+"}");
+		}
+
+		List<Class<?>> interfaceTree = new ArrayList<Class<?>>(16);
+		interfaceTree.addAll(Arrays.asList(clss.getInterfaces()));
+		for (Class<?> superClss : classTree)
+			interfaceTree.addAll(Arrays.asList(superClss.getInterfaces()));
+			
+		if (debug && DebugFile.trace) {
+			StringBuilder intfaces = new StringBuilder();
+			for (Class<?> iface : interfaceTree)
+				intfaces.append(intfaces.length()==0 ? "" : ",").append(iface.getName());
+			DebugFile.writeln("Implemented interfaces are {"+intfaces.toString()+"}");
+		}		
+		classTree.addAll(interfaceTree);
+		
+		if (debug && DebugFile.trace) {
+			DebugFile.decIdent();
+			StringBuilder all = new StringBuilder();
+			for (Class<?> clzz : classTree)
+				all.append(all.length()==0 ? "" : ",").append(clzz.getName());
+			DebugFile.writeln("End ObjectFactory.getClassTree() : ["+all.toString()+"]");
+		}
+
 		return classTree.toArray(new Class<?>[classTree.size()]);
 	}
 
@@ -249,8 +309,18 @@ public class ObjectFactory {
 	 * @return Constructor&lt;? extends Object&gt; Object constructor or <b>null</b> 
 	 * @throws IllegalArgumentException If more than one constructor is suitable for the given arguments but its signature does not exactly match the classes of the parameters
 	 */
+	@SuppressWarnings("unused")
 	private static Constructor<? extends Object> tryConstructorExtended(Class<? extends Object> objectClass, Class<?>... parameterClasses) throws IllegalArgumentException {
 		
+		if (debug && DebugFile.trace) {
+			StringBuilder params = new StringBuilder();
+			if (parameterClasses!=null)
+				for (Class<?> clazz : parameterClasses)
+					params.append(",").append(clazz.getName());			
+			DebugFile.writeln("ObjectFactory.tryConstructorExtended("+objectClass.getName()+params.toString()+")");
+			DebugFile.incIdent();
+		}
+
 		// Try the constructor which parameters match exactly the ones given
 		Constructor<? extends Object> objectConstructor = tryConstructor (objectClass, parameterClasses);
 		
@@ -273,7 +343,7 @@ public class ObjectFactory {
 				for (Class<?> pclss : parameterClasses) {
 					variants.add (getClassTree(pclss));
 
-					if (DebugFile.trace) {
+					if (debug && DebugFile.trace) {
 						StringBuilder variations = new StringBuilder();
 						for (Class<?> clazz : variants.get(variants.size()-1))
 							variations.append(clazz.getName()).append(",");
@@ -305,9 +375,14 @@ public class ObjectFactory {
 				
 			}
 		}
+		if (debug && DebugFile.trace) {
+			DebugFile.decIdent();
+			DebugFile.writeln("End ObjectFactory.tryConstructorExtended() : " + objectConstructor);
+		}
 		return objectConstructor;
 	}
 	
+	@SuppressWarnings("unused")
 	protected static Constructor<? extends Object> tryConstructor(Class<? extends Object> objectClass, Class<?>... parameterClasses) {
 		Constructor<? extends Object> objectConstructor = null;
 		try {
@@ -318,7 +393,7 @@ public class ObjectFactory {
 			}
 		}
 		catch (NoSuchMethodException notfound) {
-			if (DebugFile.trace) {
+			if (debug && DebugFile.trace) {
 				StringBuilder paramClassNames = new StringBuilder();
 				paramClassNames.append("(");
 				if (parameterClasses!=null) {
@@ -326,7 +401,7 @@ public class ObjectFactory {
 						paramClassNames.append(parameterClasses[p].getName()).append(p<parameterClasses.length-1 ? "," : "");
 				}
 				paramClassNames.append(")");
-				if (DebugFile.trace)
+				if (debug && DebugFile.trace)
 					DebugFile.writeln("no constructor with signature " + paramClassNames.toString() + " found for " + objectClass.getName());
 			}	
 		}

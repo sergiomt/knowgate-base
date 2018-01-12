@@ -1,5 +1,9 @@
 package com.knowgate.typeutils;
 
+import java.io.File;
+import java.io.IOException;
+import java.net.URL;
+
 /**
  * This file is licensed under the Apache License version 2.0.
  * You may not use this file except in compliance with the license.
@@ -13,6 +17,7 @@ package com.knowgate.typeutils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Enumeration;
 import java.util.List;
 
 /**
@@ -74,5 +79,49 @@ public class ClassSpaceHelper {
 		}
 		return retval;
 	}
-	
+
+	 /**
+	 * <p>Scans all classes accessible from the context class loader which belong to the given package and subpackages.</p>
+	 * @param packageName The base package
+	 * @return The classes
+	 * @throws ClassNotFoundException
+	 * @throws IOException
+	 */
+	public static Class<?>[] getClassesAtPackage(final String packageName)
+	        throws ClassNotFoundException, IOException {
+	    ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+	    final String path = packageName.replace('.', '/');
+	    Enumeration<URL> resources = classLoader.getResources(path);
+	    final List<File> dirs = new ArrayList<File>();
+	    while (resources.hasMoreElements())
+	        dirs.add(new File(resources.nextElement().getFile()));
+	    List<Class<?>> classes = new ArrayList<>();
+	    for (File directory : dirs)
+	        classes.addAll(findClasses(directory, packageName));
+	    return classes.toArray(new Class[classes.size()]);
+	}	
+
+	/**
+	 * <p>Recursive method used to find all classes in a given directory and subdirs.</p>
+	 * @param directory   The base directory
+	 * @param packageName The package name for classes found inside the base directory
+	 * @return The classes
+	 * @throws ClassNotFoundException
+	 */
+	private static List<Class<?>> findClasses(final File directory, final String packageName) throws ClassNotFoundException {
+	    List<Class<?>> classes = new ArrayList<>();
+	    if (!directory.exists()) {
+	        return classes;
+	    }
+	    File[] files = directory.listFiles();
+	    for (File file : files) {
+	        if (file.isDirectory()) {
+	            assert !file.getName().contains(".");
+	            classes.addAll(findClasses(file, packageName + "." + file.getName()));
+	        } else if (file.getName().endsWith(".class")) {
+	            classes.add(Class.forName(packageName + '.' + file.getName().substring(0, file.getName().length() - 6)));
+	        }
+	    }
+	    return classes;
+	}
 }
