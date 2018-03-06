@@ -84,7 +84,7 @@ public class RC4 {
         for (int i=0; i < 256; i++) {
             state[i] = (byte)i;
         }
-        
+
         x = 0;
         y = 0;
         
@@ -96,7 +96,7 @@ public class RC4 {
         if (key == null || key.length == 0) {
             throw new NullPointerException("RC4 key may not be null nor empty");
         }
-        
+
         for (int i=0; i < 256; i++) {
 
             index2 = ((key[index1] & 0xff) + (state[i] & 0xff) + index2) & 0xff;
@@ -108,8 +108,6 @@ public class RC4 {
             index1 = (index1 + 1) % key.length;
         }
 
-
-
     }
 
     /** 
@@ -119,16 +117,14 @@ public class RC4 {
      * @return the result of the encryption/decryption
      */
     public byte[] rc4(String data) {
-        
+
         if (data == null) {
             return null;
         }
-        
+
         byte[] tmp = data.getBytes();
-        
-        this.rc4(tmp);
-        
-        return tmp;
+
+        return rc4(tmp);
     }
 
     /** 
@@ -139,16 +135,13 @@ public class RC4 {
      */
     public byte[] rc4(byte[] buf) {
 
-        //int lx = this.x;
-        //int ly = this.y;
-        
         int xorIndex;
         byte tmp;
-        
+
         if (buf == null) {
             return null;
         }
-        
+
         byte[] result = new byte[buf.length];
         
         for (int i=0; i < buf.length; i++) {
@@ -163,11 +156,8 @@ public class RC4 {
             xorIndex = ((state[x] &0xff) + (state[y] & 0xff)) & 0xff;
             result[i] = (byte)(buf[i] ^ state[xorIndex]);
         }
-        
-        //this.x = lx;
-        //this.y = ly;
-        
+
         return result;
     }
-    
+
 }
