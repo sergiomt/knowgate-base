@@ -23,7 +23,7 @@ public class LatLong {
   public LatLong() {
     fLng = fLat = 0f;
   }
-  
+
   public LatLong(float fLattitude, float fLongitude) {
     fLat = fLattitude;
     fLng = fLongitude;
