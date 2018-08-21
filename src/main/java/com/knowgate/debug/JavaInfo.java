@@ -156,9 +156,9 @@ public class JavaInfo {
     }
 
     public void printDiskInfo() {
-        System.out.println("Current directory: "+Paths.get(".").toAbsolutePath().normalize().toString());
         File[] roots = File.listRoots();
         for (File r : roots) {
+              out.println("Current directory: "+Paths.get(".").toAbsolutePath().normalize().toString());
               out.println("File system root: " + r.getAbsolutePath());
               out.println("\tTotal space (bytes): " + r.getTotalSpace());
               out.println("\tFree space (bytes): " + r.getFreeSpace());
