@@ -50,7 +50,7 @@ public class MimeUtils {
 
 	/**
 	 * Get file extension for a MIME Type
-	 * @param fileExtension String
+	 * @param mimeType String
 	 * @return String MIME type or null if no MIME type was found for given file extension
 	 */
 	public static String getFileExtensionForMimeType(final String mimeType) {
