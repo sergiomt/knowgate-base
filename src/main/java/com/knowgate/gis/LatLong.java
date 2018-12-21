@@ -1,5 +1,7 @@
 package com.knowgate.gis;
 
+import java.io.Serializable;
+
 /**
  * This file is licensed under the Apache License version 2.0.
  * You may not use this file except in compliance with the license.
@@ -16,7 +18,9 @@ package com.knowgate.gis;
  * @author Sergio Montoro Ten
  *
  */
-public class LatLong {
+public class LatLong implements Serializable {
+
+  private static final long serialVersionUID = 1L;
 
   private float fLat, fLng;
 
