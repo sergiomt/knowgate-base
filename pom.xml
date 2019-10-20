@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.knowgate</groupId>
   <artifactId>knowgate-base</artifactId>
-  <version>9.0.1</version>
+  <version>9.1.0</version>
   <packaging>jar</packaging>
   <name>knowgate-base</name>
   <description>KnowGate base libraries: arrays, string, IO, localization, MD5, RC4, debug log traces and object factory</description>
@@ -86,7 +86,7 @@
     </plugins>
   </build>
   <properties>
-    <skipTests>true</skipTests>
+    <skipTests>false</skipTests>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
   <profiles>
