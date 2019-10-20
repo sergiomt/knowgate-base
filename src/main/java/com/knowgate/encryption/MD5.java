@@ -92,11 +92,11 @@ class MD5State {
 /**
  * Implementation of RSA's MD5 hash generator
  *
- * @version	$Revision: 1.1.1.1 $
+ * @version $Revision: 1.1.1.1 $
  * @author	Santeri Paavolainen &lt;sjpaavol@cc.helsinki.fi&gt;
  */
 
-public class MD5 {
+public class MD5 implements HashProvider {
   /**
    * MD5 state
    */
@@ -308,7 +308,7 @@ public class MD5 {
     throws NullPointerException {
     int	index, partlen, i, start;
 
-    if (null==buffer) throw new NullPointerException("Array of bytes to be hashed may not be null");
+    if (null==buffer) throw new NullPointerException("MD5 Array of bytes to be hashed may not be null");
 
     if (DebugFile.trace) {
       DebugFile.writeln("Begin MD5.Update([MD5State],byte[],"+String.valueOf(offset)+","+String.valueOf(length)+")");
@@ -408,21 +408,25 @@ public class MD5 {
 
   /**
    * Update buffer with given string.
-   *
-   * @param s		String to be update to hash (is used as
-   *		       	s.getBytes())
+   * @param s String to be update to hash (is used as s.getBytes())
+   * @throws NullPointerException if s is null
+   * @throws IllegalStateException if s is an empty String
    */
-  public void Update (String s) {
+  public void Update (String s)
+    throws NullPointerException, IllegalStateException {
     byte	chars[];
 
-//     chars = new byte[s.length()];
-//     s.getBytes(0, s.length(), chars, 0);
+	if (null==s)
+		throw new NullPointerException ("MD5 no input value provided");
+	else if (s.length()==0)
+		throw new IllegalStateException ("MD5 empty input value provided");
+
     try {
-	chars = s.getBytes("UTF-8");
+	  chars = s.getBytes("UTF-8");
     } catch(java.io.UnsupportedEncodingException ex) {
-	// Should never happen
-	ex.printStackTrace();
-	chars = new byte[1];
+	  // Should never happen
+	  ex.printStackTrace();
+	  chars = new byte[1];
     }
 
     Update(chars, chars.length);
@@ -458,8 +462,7 @@ public class MD5 {
    * current state of this object. Note: getting a hash does not
    * invalidate the hash object, it only creates a copy of the real
    * state which is finalized.
-   *
-   * @return	Array of 16 bytes, the hash of all updated bytes
+   * @return Array of 16 bytes, the hash of all updated bytes
    */
   public synchronized byte[] Final () {
     byte	bits[];
@@ -510,7 +513,6 @@ public class MD5 {
 
   /**
    * Returns 32-character hex representation of this objects hash
-   *
    * @return String of this object's hash
    */
   public String asHex () {
