@@ -54,7 +54,7 @@ public class ObjectFactory {
 	 */
 	@SuppressWarnings("unused")
 	public static Constructor<? extends Object> getConstructor(Class<? extends Object> objectClass, Class<?>[] parameterClasses) throws IllegalArgumentException {
-		
+
 		if (debug && DebugFile.trace) {
 			StringBuilder params = new StringBuilder();
 			if (parameterClasses!=null)
@@ -65,15 +65,15 @@ public class ObjectFactory {
 		}
 
 		Constructor<? extends Object> objectContructor = null;
-		
+
 		final String constructorSignature = signature(objectClass, parameterClasses);
 		objectContructor = constructorCache.get(constructorSignature);
 
 		if (null==objectContructor) {
 			objectContructor = tryConstructorExtended (objectClass, parameterClasses);
-		
+
 			// Try to permute first, second and third arguments
-			if (null==objectContructor) {
+			if (null==objectContructor && parameterClasses!=null) {
 				if (parameterClasses.length==2) {
 					if (debug && DebugFile.trace)
 						DebugFile.writeln("Trying two parameters in reverse order");
@@ -102,7 +102,7 @@ public class ObjectFactory {
 					} 
 				}
 			}
-			
+
 			if (debug && DebugFile.trace) {
 				StringBuilder variants = new StringBuilder();
 				if (null==objectContructor) {
@@ -204,6 +204,7 @@ public class ObjectFactory {
 	 * @return static Class&lt;?&gt;[]
 	 */
 	protected static Class<?>[] getParameterClasses(Object... constructorParameters) {
+		if (null==constructorParameters) return null;
 		final int paramCount = constructorParameters.length;
 		Class<?>[] parameterClasses = new Class<?>[paramCount];
 		for (int p=0; p<paramCount; p++)
@@ -230,7 +231,7 @@ public class ObjectFactory {
 		sign.append(")");
 		return sign.toString();
 	}
-	
+
 	/**
 	 * Get super classes and interfaces implemented by the given class
 	 * @param clss Class&lt;?&gt;
@@ -242,9 +243,9 @@ public class ObjectFactory {
 			DebugFile.writeln("Begin ObjectFactory.getClassTree("+clss.getName()+")");
 			DebugFile.incIdent();
 		}
-		
+
 		List<Class<?>> classTree = new ArrayList<Class<?>>(16);
-		
+
 		classTree.add(clss);
 		getSuperClasses(clss, classTree);
 
@@ -259,7 +260,7 @@ public class ObjectFactory {
 		interfaceTree.addAll(Arrays.asList(clss.getInterfaces()));
 		for (Class<?> superClss : classTree)
 			interfaceTree.addAll(Arrays.asList(superClss.getInterfaces()));
-			
+
 		if (debug && DebugFile.trace) {
 			StringBuilder intfaces = new StringBuilder();
 			for (Class<?> iface : interfaceTree)
@@ -267,7 +268,7 @@ public class ObjectFactory {
 			DebugFile.writeln("Implemented interfaces are {"+intfaces.toString()+"}");
 		}		
 		classTree.addAll(interfaceTree);
-		
+
 		if (debug && DebugFile.trace) {
 			DebugFile.decIdent();
 			StringBuilder all = new StringBuilder();
@@ -301,7 +302,7 @@ public class ObjectFactory {
 				allAssignable = allAssignable && (params1[p].isAssignableFrom(params2[p]));
 		return allAssignable;
 	}
-	
+
 	/**
 	 * Try to find a suitable constructor of a class for the given parameter list.
 	 * @param objectClass Class&lt;? extends Object&gt; Class of the object to be constructed
@@ -311,7 +312,7 @@ public class ObjectFactory {
 	 */
 	@SuppressWarnings("unused")
 	private static Constructor<? extends Object> tryConstructorExtended(Class<? extends Object> objectClass, Class<?>... parameterClasses) throws IllegalArgumentException {
-		
+
 		if (debug && DebugFile.trace) {
 			StringBuilder params = new StringBuilder();
 			if (parameterClasses!=null)
@@ -323,10 +324,10 @@ public class ObjectFactory {
 
 		// Try the constructor which parameters match exactly the ones given
 		Constructor<? extends Object> objectConstructor = tryConstructor (objectClass, parameterClasses);
-		
-		if (null==objectConstructor) {
+
+		if (null==objectConstructor && parameterClasses!=null) {
 			final int paramClassCount = parameterClasses.length;
-			
+
 			// Try all superclasses and implemented interfaces of given parameter class
 			if (paramClassCount==1) {
 
@@ -334,11 +335,11 @@ public class ObjectFactory {
 					objectConstructor = tryConstructor (objectClass, clss);
 					if (null!=objectConstructor) break;
 				}
-			
+
 			} else if (paramClassCount>1) {
-				
+
 				// List all the superclasses and implemented interfaces of the given parameter classes
-				
+
 				ArrayList<Class<?>[]> variants = new ArrayList<Class<?>[]>(paramClassCount);
 				for (Class<?> pclss : parameterClasses) {
 					variants.add (getClassTree(pclss));
@@ -372,7 +373,7 @@ public class ObjectFactory {
 						}
 					}
 				}
-				
+
 			}
 		}
 		if (debug && DebugFile.trace) {
@@ -381,7 +382,7 @@ public class ObjectFactory {
 		}
 		return objectConstructor;
 	}
-	
+
 	@SuppressWarnings("unused")
 	protected static Constructor<? extends Object> tryConstructor(Class<? extends Object> objectClass, Class<?>... parameterClasses) {
 		Constructor<? extends Object> objectConstructor = null;
@@ -410,74 +411,74 @@ public class ObjectFactory {
 	}
 
 	protected static Set<Class<?>> getSubclassesOf(Package pkg, Class<?> superClass) throws RuntimeException {
-	    String pkgname = pkg.getName();
-	    HashSet<Class<?>> classes = new HashSet<Class<?>>();
-	    // Get a File object for the package
-	    File directory = null;
-	    String fullPath;
-	    String relPath = pkgname.replace('.', '/');
-	    URL resource = ClassLoader.getSystemClassLoader().getResource(relPath);
-	    if (resource == null) {
-	        throw new RuntimeException("No resource for " + relPath);
-	    }
-	    fullPath = resource.getFile();
+		String pkgname = pkg.getName();
+		HashSet<Class<?>> classes = new HashSet<Class<?>>();
+		// Get a File object for the package
+		File directory = null;
+		String fullPath;
+		String relPath = pkgname.replace('.', '/');
+		URL resource = ClassLoader.getSystemClassLoader().getResource(relPath);
+		if (resource == null) {
+			throw new RuntimeException("No resource for " + relPath);
+		}
+		fullPath = resource.getFile();
 
-	    try {
-	        directory = new File(resource.toURI());
-	    } catch (URISyntaxException e) {
-	        throw new RuntimeException(pkgname + " (" + resource + ") does not appear to be a valid URL / URI.  Strange, since we got it from the system...", e);
-	    } catch (IllegalArgumentException e) {
-	        directory = null;
-	    }
+		try {
+			directory = new File(resource.toURI());
+		} catch (URISyntaxException e) {
+			throw new RuntimeException(pkgname + " (" + resource + ") does not appear to be a valid URL / URI.  Strange, since we got it from the system...", e);
+		} catch (IllegalArgumentException e) {
+			directory = null;
+		}
 
-	    if (directory != null && directory.exists()) {
-	        // Get the list of the files contained in the package
-	        String[] files = directory.list();
-	        for (int i = 0; i < files.length; i++) {
-	            // we are only interested in .class files
-	            if (files[i].endsWith(".class")) {
-	                // removes the .class extension
-	                String className = pkgname + '.' + files[i].substring(0, files[i].length() - 6);
-	                try {
-	                    Class<?> clss = Class.forName(className);
-	                    if (superClass.isAssignableFrom(clss))
-	                        classes.add(clss);
-	                } 
-	                catch (ClassNotFoundException e) {
-	                    throw new RuntimeException("ClassNotFoundException loading " + className);
-	                }
-	            }
-	        }
-	    }
-	    else {
-	        try {
-	            String jarPath = fullPath.replaceFirst("[.]jar[!].*", ".jar").replaceFirst("file:", "");
-	            JarFile jarFile = new JarFile(jarPath);         
-	            Enumeration<JarEntry> entries = jarFile.entries();
-	            while(entries.hasMoreElements()) {
-	                JarEntry entry = entries.nextElement();
-	                String entryName = entry.getName();
-	                if(entryName.startsWith(relPath) && entryName.length() > (relPath.length() + "/".length())) {
-	                    String className = entryName.replace('/', '.').replace('\\', '.').replace(".class", "");
-	                    try {
-		                	Class<?> clss = Class.forName(className);
-		                    if (superClass.isAssignableFrom(clss))
-		                    	classes.add(clss);
-	                    } 
-	                    catch (ClassNotFoundException e) {
-	        		        jarFile.close();
-	                        throw new RuntimeException("ClassNotFoundException loading " + className);
-	                    }
-	                }
-	            }
-		        jarFile.close();
-	        } catch (IOException e) {
-	            throw new RuntimeException(pkgname + " (" + directory + ") does not appear to be a valid package", e);
-	        }
-	    }
-	    return classes;
+		if (directory != null && directory.exists()) {
+			// Get the list of the files contained in the package
+			String[] files = directory.list();
+			for (int i = 0; i < files.length; i++) {
+				// we are only interested in .class files
+				if (files[i].endsWith(".class")) {
+					// removes the .class extension
+					String className = pkgname + '.' + files[i].substring(0, files[i].length() - 6);
+					try {
+						Class<?> clss = Class.forName(className);
+						if (superClass.isAssignableFrom(clss))
+							classes.add(clss);
+					} 
+					catch (ClassNotFoundException e) {
+						throw new RuntimeException("ClassNotFoundException loading " + className);
+					}
+				}
+			}
+		}
+		else {
+			try {
+				String jarPath = fullPath.replaceFirst("[.]jar[!].*", ".jar").replaceFirst("file:", "");
+				JarFile jarFile = new JarFile(jarPath);         
+				Enumeration<JarEntry> entries = jarFile.entries();
+				while(entries.hasMoreElements()) {
+					JarEntry entry = entries.nextElement();
+					String entryName = entry.getName();
+					if(entryName.startsWith(relPath) && entryName.length() > (relPath.length() + "/".length())) {
+						String className = entryName.replace('/', '.').replace('\\', '.').replace(".class", "");
+						try {
+							Class<?> clss = Class.forName(className);
+							if (superClass.isAssignableFrom(clss))
+								classes.add(clss);
+						} 
+						catch (ClassNotFoundException e) {
+							jarFile.close();
+							throw new RuntimeException("ClassNotFoundException loading " + className);
+						}
+					}
+				}
+				jarFile.close();
+			} catch (IOException e) {
+				throw new RuntimeException(pkgname + " (" + directory + ") does not appear to be a valid package", e);
+			}
+		}
+		return classes;
 	}
 
 	private static final Object[] NoParams = new Object[0];
-	
+
 }
